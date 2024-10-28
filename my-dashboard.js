@@ -20,14 +20,10 @@ export class MyDashboard extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
-    this.title = "";
-    this.imgUrl = "";
-    this.alt = "";
-    this.secondaryCreator = "";
-    this.imageData = null;
-
-    // Fetch the NASA image on initialization
-    this.fetchNasaImage();
+    this.title = "NASA Image Search";
+    this.query = "";
+    this.loading = false;
+    this.items = [];
   }
 
   // Lit reactive properties
@@ -35,26 +31,30 @@ export class MyDashboard extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
-      imgUrl: { type: String },
-      alt: { type: String },
-      secondaryCreator: { type: String },
-      imageData: { type: Object }
+      query: { type: String },
+      loading: { type: Boolean, reflect: true },
+      items: { type: Array }
     };
   }
 
-  // Fetch the NASA image
-  async fetchNasaImage() {
-    const response = await fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+  async fetchNasaImages(query) {
+    this.loading = true;
+    const response = await fetch(`https://images-api.nasa.gov/search?media_type=image&q=${query}`);
     const data = await response.json();
-    this.imageData = data;
+    if (data.collection) {
+      this.items = data.collection.items;
+    }
+    this.loading = false;
+  }
 
-    // Set the properties with data from the API
-    this.imgUrl = data.url;
-    this.alt = data.title; // You can set this to any appropriate text
-    this.secondaryCreator = data.copyright || "NASA"; // Fallback to "NASA" if copyright is not available
+  handleInputChange(e) {
+    this.query = e.target.value;
+  }
 
-    // Update the component to reflect the new data
-    this.requestUpdate();
+  updated(changedProperties) {
+    if (changedProperties.has('query') && this.query) {
+      this.fetchNasaImages(this.query);
+    }
   }
 
   // Lit scoped styles
@@ -63,21 +63,22 @@ export class MyDashboard extends DDDSuper(I18NMixin(LitElement)) {
       css`
         :host {
           display: block;
-          margin: var(--ddd-spacing-2, 16px);
-          padding: var(--ddd-spacing-4, 32px);
-          border: 1px solid var(--ddd-theme-border-color, #ccc);
-          border-radius: var(--ddd-radius-lg);
-          cursor: pointer;
-          transition: background-color 0.3s ease;
+          padding: 16px;
         }
-        :host(:hover) {
-          background-color: var(--ddd-accent-3, #e0e0e0);
+        input {
+          font-size: 20px;
+          padding: 8px;
+          width: 100%;
+        }
+        .results {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 16px;
+          margin-top: 20px;
         }
         img {
-          width: 240px;
+          width: 100%;
           height: auto;
-          display: block;
-          margin: 0 auto;
         }
       `];
   }
@@ -87,13 +88,29 @@ export class MyDashboard extends DDDSuper(I18NMixin(LitElement)) {
     return html`
       <div>
         <h3>${this.title}</h3>
-        <a href="${this.imgUrl}" target="_blank" rel="noopener noreferrer">
-          <img src="${this.imgUrl}" alt="${this.alt}" />
-        </a>
-        <p>Creator: ${this.secondaryCreator}</p>
+        <input
+          type="text"
+          placeholder="Search NASA images"
+          @input="${this.handleInputChange}"
+        />
+
+        <div class="results">
+          ${this.loading ? html`<p>Loading...</p>` : ""}
+          ${this.items.map(
+            (item) => html`
+              <div>
+                <a href="${item.links[0].href}" target="_blank">
+                  <img src="${item.links[0].href}" alt="${item.data[0].title}" />
+                </a>
+                <p>${item.data[0].title}</p>
+              </div>
+            `
+          )}
+        </div>
       </div>
     `;
   }
 }
 
 globalThis.customElements.define(MyDashboard.tag, MyDashboard);
+  

@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "my-dashboard.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`my-dashboard`",
+          "name": "MyDashboard",
+          "members": [
+            {
+              "kind": "field",
+              "name": "tag",
+              "static": true
+            },
+            {
+              "kind": "method",
+              "name": "fetchNasaImages",
+              "parameters": [
+                {
+                  "name": "query"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleInputChange",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"NASA Image Search\"",
+              "privacy": "public",
+              "attribute": "title"
+            },
+            {
+              "kind": "field",
+              "name": "query",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "privacy": "public",
+              "attribute": "query"
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "privacy": "public",
+              "attribute": "loading",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "items",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]",
+              "privacy": "public",
+              "attribute": "items"
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
+            }
+          ],
+          "attributes": [
+            {
+              "name": "",
+              "fieldName": ""
+            },
+            {
+              "name": "title",
+              "fieldName": "title"
+            },
+            {
+              "name": "query",
+              "fieldName": "query"
+            },
+            {
+              "name": "loading",
+              "fieldName": "loading"
+            },
+            {
+              "name": "items",
+              "fieldName": "items"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "DDDSuper",
+              "package": "@haxtheweb/d-d-d/d-d-d.js"
+            },
+            {
+              "name": "I18NMixin",
+              "package": "@haxtheweb/i18n-manager/lib/I18NMixin.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "my-dashboard",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "MyDashboard",
+          "declaration": {
+            "name": "MyDashboard",
+            "module": "my-dashboard.js"
+          }
+        }
+      ]
+    }
+  ]
+}
